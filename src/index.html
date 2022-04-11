@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Fotostandort</title>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		#map {
+			position: absolute;
+			top: 0px;
+			bottom: 0;
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<style>
+		.coordinates {
+			font: bold 12px/20px, Arial, Helvetica, sans-serif;
+			color: #404040;
+			background-color: #fff;
+			position: absolute;
+			bottom: 10px;
+			left: 10px;
+			padding: 5px 10px;
+			margin: 0;
+			font-size: 16px;
+			border: 1px solid rgba(0, 0, 0, 0.4);
+			display: none;
+			width: 270px;
+			z-index: 1;
+		}
+
+		.imagediv {
+			padding: 10px;
+			bottom: 70px;
+			width: 270px;
+			visibility: hidden;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.input. {
+			position: absolute;
+			display: block;
+			top: 0px;
+			left: 10px;
+			z-index: -99;
+		}
+
+		.btn-control {
+			font: bold 12px/20px, Arial, Helvetica, sans-serif;
+			background-color: #fff;
+			position: absolute;
+			top: 110px;
+			left: 10px;
+			z-index: 1;
+			border: none;
+			width: 150px;
+			margin-left: 0px;
+			display: block;
+			cursor: pointer;
+			padding: 5px 20px;
+			border: 1px solid rgba(0, 0, 0, 0.4);
+			color: #404040;
+		}
+
+		.btn2 {
+			top: 140px;
+		}
+
+		.btn3 {
+			top: 10px;
+		}
+
+		.btn4 {
+			top: 40px;
+			display: none;
+		}
+
+
+		.btn-control.active {
+			background-color: #3887be;
+			color: #ffffff;
+		}
+
+		.btn-control:hover {
+			background-color: lightgrey;
+		}
+
+		.btn-control.active:hover {
+			background-color: #3887be;
+		}
+
+		.maplibregl-ctrl-left {
+			top: 0;
+			left: 10px;
+			position: absolute;
+			pointer-events: none;
+			z-index: 2;
+		}
+
+		.maplibregl-ctrl-left .maplibregl-ctrl {
+			margin: 180px 0 0 0;
+			box-shadow: none;
+		}
+
+		.maplibregl-ctrl-group {
+			border-radius: 1px;
+			border: 1px solid rgba(0, 0, 0, 0.4);
+		}
+	</style>
+	<div id="map"></div>
+	<div id="image" class="coordinates imagediv"></div>
+	<input id="input" type="file" accept="image/*" class="input" hidden />
+	<button id='osm' class='btn-control active'>OpenStreetMap</button>
+	<button id='dop' class='btn-control btn2'>DOP/vDOP NRW</button>
+	<button id='select' class='btn-control btn3'>Bild auswählen</button>
+	<button id='save' class='btn-control btn4'>Bild speichern</button>
+	<pre id="coordinates" class="coordinates"></pre>
+
+	<!--
+	https://github.com/tholman/github-corners
+	The MIT License (MIT)
+	Copyright (c) 2016 Tim Holman
+	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	-->
+	<a target='_blank' rel='noopener noreferrer' href="https://kreis-viersen.github.io/fotostandort" class="github-corner" aria-label="View source on GitHub"><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 250 250"
+			fill="#151513" style="fill:#404040; color:#fff; position: absolute; top: 0; right: 0">
+			<path d="M0 0l115 115h15l12 27 108 108V0z" fill="#fff" />
+			<path class="octo-arm" d="M128 109c-15-9-9-19-9-19 3-7 2-11 2-11-1-7 3-2 3-2 4 5 2 11 2 11-3 10 5 15 9 16" style="-webkit-transform-origin: 130px 106px; transform-origin: 130px 106px" />
+			<path class="octo-body" d="M115 115s4 2 5 0l14-14c3-2 6-3 8-3-8-11-15-24 2-41 5-5 10-7 16-7 1-2 3-7 12-11 0 0 5 3 7 16 4 2 8 5 12 9s7 8 9 12c14 3 17 7 17 7-4 8-9 11-11 11 0 6-2 11-7 16-16 16-30 10-41 2 0 3-1 7-5 11l-12 11c-1 1 1 5 1 5z" />
+		</svg>
+		<style>
+			.github-corner:hover .octo-arm {
+				animation: octocat-wave 560ms ease-in-out
+			}
+
+			@keyframes octocat-wave {
+
+				0%,
+				100% {
+					transform: rotate(0)
+				}
+
+				20%,
+				60% {
+					transform: rotate(-25deg)
+				}
+
+				40%,
+				80% {
+					transform: rotate(10deg)
+				}
+			}
+
+			@media (max-width:500px) {
+				.github-corner:hover .octo-arm {
+					animation: none
+				}
+
+				.github-corner .octo-arm {
+					animation: octocat-wave 560ms ease-in-out
+				}
+			}
+		</style>
+	</a>
+
+</body>
+
+</html>
