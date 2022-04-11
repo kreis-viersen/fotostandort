@@ -1,2 +1,2 @@
 # fotostandort
-Browsertool zum Verändern/Setzen des Fotostandorts (EXIF-Daten)
+Browsertool zum Verändern/Setzen des Fotostandorts (JPEG / EXIF-Daten)
