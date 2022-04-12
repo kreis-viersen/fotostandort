@@ -7,4 +7,14 @@ Browsertool zum Anzeigen/Verändern/Setzen des Fotostandorts (JPEG / EXIF-Daten)
 - Hintergrund OpenStreetMap oder Luftbild ([DOP/vDOP von Geobasis NRW](https://www.bezreg-koeln.nrw.de/brk_internet/geobasis/luftbildinformationen/aktuell/digitale_orthophotos/index.html)).
 - Das Bild wird lokal geladen und modifiziert (kein Upload auf irgendeinen Server).
 
-<img src="screenshot.jpg"/>
+<img src="screenshots/screenshot.jpg"/>
+
+## Einstellung Speicherort Webbrowser
+
+### Firefox
+
+<img src="screenshots/firefox_einstellung_speicherort.jpg"/>
+
+### Chrome
+
+<img src="screenshots/chrome_einstellung_speicherort.jpg"/>
