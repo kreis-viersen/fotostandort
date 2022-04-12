@@ -1,5 +1,5 @@
 # Fotostandort
-Browsertool zum Verändern/Setzen des Fotostandorts (JPEG / EXIF-Daten)
+Browsertool zum Anzeigen/Verändern/Setzen des Fotostandorts (JPEG / EXIF-Daten)
 
 ## Features
 - Bildposition wird durch Marker auf der Karte angezeigt, Veränderung der EXIF-Positionsdaten erfolgt durch Verschieben des Markers - anschließend kann das veränderte Bild gespeichert werden.
