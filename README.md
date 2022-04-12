@@ -1,7 +1,9 @@
 # Fotostandort
-Browsertool zum Anzeigen/Verändern/Setzen des Fotostandorts (JPEG / EXIF-Daten)
+### _Browsertool zum Anzeigen/Verändern/Setzen des Fotostandorts (JPEG / EXIF-Daten)_
 
 https://kreis-viersen.github.io/fotostandort/
+
+Fragen, Anmerkungen, Fehlermeldungen etc. können z.B. über ein [GitHub-Issue](https://github.com/kreis-viersen/fotostandort/issues) oder auch gerne per E-Mail an [open@kreis-viersen.de](mailto:open@kreis-viersen.de?subject=Fotostandort) mitgeteilt werden.
 
 ## Features
 - Bildposition wird durch Marker auf der Karte angezeigt, Veränderung der EXIF-Positionsdaten erfolgt durch Verschieben des Markers - anschließend kann das veränderte Bild gespeichert werden.
