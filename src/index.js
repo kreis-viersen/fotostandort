@@ -112,8 +112,6 @@ function uploadImage(e) {
 
         const newPhoto = piexif.insert(newExifBinary, image);
 
-        let fileBuffer = Buffer.from(newPhoto, 'binary');
-
         removeListeners()
 
         document.getElementById('save').addEventListener('click', saveImage);

@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 const LicensePlugin = require('webpack-license-plugin')
 const TerserPlugin = require('terser-webpack-plugin');
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 const path = require('path');
 
@@ -51,7 +50,6 @@ module.exports = {
       scriptLoading: 'blocking'
     }),
     new HtmlInlineScriptPlugin(),
-    new NodePolyfillPlugin(),
     new LicensePlugin()
   ]
 };

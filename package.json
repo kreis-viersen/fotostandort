@@ -22,7 +22,6 @@
   "dependencies": {
     "file-saver": "^2.0.5",
     "maplibre-gl": "^2.1.9",
-    "node-polyfill-webpack-plugin": "^1.1.4",
     "piexifjs": "^1.0.6"
   }
 }
