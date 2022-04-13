@@ -1,4 +1,7 @@
 # Fotostandort
+[![GitHub CI status](https://github.com/kreis-viersen/fotostandort/workflows/ci/badge.svg)][github-action-ci]
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
+
 ### _Browsertool zum Anzeigen/Verändern/Setzen des Fotostandorts (JPEG / EXIF-Daten)_
 
 https://kreis-viersen.github.io/fotostandort/
