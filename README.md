@@ -6,7 +6,7 @@ https://kreis-viersen.github.io/fotostandort/
 Fragen, Anmerkungen, Fehlermeldungen etc. können z.B. über ein [GitHub-Issue](https://github.com/kreis-viersen/fotostandort/issues) oder auch gerne per E-Mail an [open@kreis-viersen.de](mailto:open@kreis-viersen.de?subject=Fotostandort) mitgeteilt werden.
 
 ## Features
-- Bildposition wird durch Marker auf der Karte angezeigt, Veränderung der EXIF-Positionsdaten erfolgt durch Verschieben des Markers - anschließend kann das veränderte Bild gespeichert werden. **Achtung! - Dabei werden derzeit vorhandene EXIF-Daten zur Höhe und Richtung gelöscht, siehe Diskussion in https://github.com/kreis-viersen/fotostandort/issues/1.**
+- Bildposition wird durch Marker auf der Karte angezeigt, Veränderung der EXIF-Positionsdaten erfolgt durch Verschieben des Markers - anschließend kann das veränderte Bild gespeichert werden.
 - Wenn keine Koordinaten im Bild vorhanden sind, wird eine entsprechende Meldung angezeigt und es kann ein Standort mittels Marker gesetzt werden.
 - Hintergrund OpenStreetMap oder Luftbild ([DOP/vDOP von Geobasis NRW](https://www.bezreg-koeln.nrw.de/brk_internet/geobasis/luftbildinformationen/aktuell/digitale_orthophotos/index.html)).
 - Das Bild wird lokal geladen und modifiziert (kein Upload auf irgendeinen Server).

@@ -108,11 +108,6 @@ function uploadImage(e) {
         exif['GPS'][piexif.GPSIFD.GPSLatitudeRef] = latRef;
         exif['GPS'][piexif.GPSIFD.GPSLongitudeRef] = lonRef;
 
-        delete exif['GPS'][piexif.GPSIFD.GPSAltitude];
-        delete exif['GPS'][piexif.GPSIFD.GPSAltitudeRef];
-        delete exif['GPS'][piexif.GPSIFD.GPSImgDirection];
-        delete exif['GPS'][piexif.GPSIFD.GPSImgDirectionRef];
-
         const newExifBinary = piexif.dump(exif);
 
         const newPhoto = piexif.insert(newExifBinary, image);
