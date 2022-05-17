@@ -39,7 +39,7 @@ function uploadImage(e) {
     let image = e.target.result;
 
     var imagediv = document.getElementById('image')
-    imagediv.innerHTML = '<img src="' + image + '" width="270" />';
+    imagediv.innerHTML = '<img src="' + image + '" width="270" /><p>' + file.name + '</p>';
     imagediv.style.visibility = 'visible';
 
     const upload_exif = piexif.load(image)
