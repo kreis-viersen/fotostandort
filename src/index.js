@@ -51,7 +51,7 @@ function uploadImage(e) {
     imagediv.innerHTML = '<img src="' + image + '" width="270" /><p>' + file.name + '</p>';
     imagediv.style.visibility = 'visible';
 
-    // sven: only one exif needed
+    // only one exif needed
     exif = piexif.load(image)
 
     // read exif
