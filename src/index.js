@@ -28,6 +28,123 @@ let exif = null;
 let image = null;
 let file = null;
 
+function analyzeExif(image) {
+
+  let exifData = null;
+  let hasExif = true;
+  let hasLocation = false;
+  let hasDirection = false;
+
+  try {
+    exifData = piexif.load(image);
+
+    hasLocation =
+      exifData?.GPS?.[piexif.GPSIFD.GPSLatitude] !== undefined &&
+      exifData?.GPS?.[piexif.GPSIFD.GPSLongitude] !== undefined;
+
+    hasDirection =
+      exifData?.GPS?.[piexif.GPSIFD.GPSImgDirection] !== undefined;
+
+  } catch (err) {
+    hasExif = false;
+  }
+
+  if (!exifData) {
+    exifData = {
+      "0th": {},
+      "Exif": {},
+      "GPS": {},
+      "1st": {},
+      "thumbnail": null
+    };
+  }
+
+  return {
+    exif: exifData,
+    hasExif,
+    hasLocation,
+    hasDirection
+  };
+}
+
+function showExifDialog(status) {
+
+  let message = "";
+
+  if (!status.hasExif) {
+    message =
+      "Dieses Bild enthält keine EXIF-Daten.\n\n" +
+      "Möchten Sie einen Standort und eine Blickrichtung hinzufügen?";
+  }
+
+  else if (!status.hasLocation && !status.hasDirection) {
+    message =
+      "Dieses Bild enthält keine Standort- oder Richtungsinformationen.\n\n" +
+      "Möchten Sie diese Informationen hinzufügen?";
+  }
+
+  else if (!status.hasLocation) {
+    message =
+      "Dieses Bild enthält keine Standortkoordinaten.\n\n" +
+      "Möchten Sie einen Standort setzen?";
+  }
+
+  else if (!status.hasDirection) {
+    message =
+      "Dieses Bild enthält keine Blickrichtung.\n\n" +
+      "Möchten Sie eine Blickrichtung setzen?";
+  }
+
+  if (message.length > 0) {
+    return confirm(message);
+  }
+
+  return true;
+}
+
+function convertToJpeg(dataUrl) {
+  return new Promise((resolve, reject) => {
+
+    const img = new Image();
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      const jpegDataUrl = canvas.toDataURL(
+        "image/jpeg",
+        0.95
+      );
+
+      resolve(jpegDataUrl);
+    };
+
+    img.onerror = reject;
+
+    img.src = dataUrl;
+  });
+}
+
+function dataURLtoBlob(dataUrl) {
+  const arr = dataUrl.split(',');
+  const mime = arr[0].match(/:(.*?);/)[1];
+
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+
+  return new Blob([u8arr], { type: mime });
+}
+
 function uploadImage(e) {
 
   removeListeners()
@@ -43,48 +160,84 @@ function uploadImage(e) {
   file = e.target.files[0];
   let reader = new FileReader();
 
-  reader.onload = (e) => {
+  reader.onload = async (e) => {
 
-    // load image
     image = e.target.result;
+
+    if (file.type !== "image/jpeg") {
+      image = await convertToJpeg(image);
+      file = new File(
+        [dataURLtoBlob(image)],
+        file.name.replace(/\.[^/.]+$/, ".jpg"),
+        { type: "image/jpeg" }
+      );
+    }
+
     var imagediv = document.getElementById('image')
     imagediv.innerHTML = '<img src="' + image + '" width="270" /><p>' + file.name + '</p>';
     imagediv.style.visibility = 'visible';
 
-    // only one exif needed
-    exif = piexif.load(image)
+    const status = analyzeExif(image);
 
-    // read exif
-    const latitude = exif['GPS'][piexif.GPSIFD.GPSLatitude];
-    const latitudeRef = exif['GPS'][piexif.GPSIFD.GPSLatitudeRef];
-    const longitude = exif['GPS'][piexif.GPSIFD.GPSLongitude];
-    const longitudeRef = exif['GPS'][piexif.GPSIFD.GPSLongitudeRef];
-    const direction = exif['GPS'][piexif.GPSIFD.GPSImgDirection];
-    
-
-    // check image heading
-    heading = null;
-    if (direction !== undefined && direction.length === 2) {
-      heading = direction[0] / direction[1];
-    } else {
-      heading = 0;
-      alert("Das Bild verfügt über keine Richtungsinformation, aber es kann eine gesetzt werden.")
+    if (!showExifDialog(status)) {
+      return;
     }
 
-    // check image coordinates
-    var lat
-    var lon
-    if (latitude !== undefined) {
-      const latitudeMultiplier = latitudeRef.toString().substring(0, 1) == 'N' ? 1 : -1;
-      lat = latitudeMultiplier * piexif.GPSHelper.dmsRationalToDeg(latitude);
-      const longitudeMultiplier = longitudeRef.toString().substring(0, 1) == 'E' ? 1 : -1;
-      lon = longitudeMultiplier * piexif.GPSHelper.dmsRationalToDeg(longitude);
+    exif = status.exif;
+
+    if (!exif.GPS) {
+      exif.GPS = {};
+    }
+
+    const latitude = exif['GPS'][piexif.GPSIFD.GPSLatitude];
+    const latitudeRef = exif['GPS'][piexif.GPSIFD.GPSLatitudeRef];
+
+    const longitude = exif['GPS'][piexif.GPSIFD.GPSLongitude];
+    const longitudeRef = exif['GPS'][piexif.GPSIFD.GPSLongitudeRef];
+
+    const direction = exif['GPS'][piexif.GPSIFD.GPSImgDirection];
+
+    let lat;
+    let lon;
+
+    if (status.hasLocation) {
+
+      const latitudeMultiplier =
+        latitudeRef.toString().substring(0, 1) === 'N'
+          ? 1
+          : -1;
+
+      lat =
+        latitudeMultiplier *
+        piexif.GPSHelper.dmsRationalToDeg(latitude);
+
+      const longitudeMultiplier =
+        longitudeRef.toString().substring(0, 1) === 'E'
+          ? 1
+          : -1;
+
+      lon =
+        longitudeMultiplier *
+        piexif.GPSHelper.dmsRationalToDeg(longitude);
+
       flyToZoom = 18;
+
     } else {
+
       lat = 51.258812;
       lon = 6.391263;
       flyToZoom = 11;
-      alert("Das Bild verfügt über keine Standortkoordinaten, aber es können nun welche gesetzt werden.")
+    }
+
+    if (status.hasDirection &&
+      direction &&
+      direction.length === 2) {
+
+      heading = direction[0] / direction[1];
+
+    } else {
+
+      heading = 0;
     }
 
     // set info text
@@ -288,7 +441,7 @@ map.on('mousedown', 'directionConeLayer', (e) => {
   const rect = el.getBoundingClientRect();
 
   // rotation not triggered 'behind' the marker
-  if (distPx < rect.height*0.9) return;
+  if (distPx < rect.height * 0.9) return;
 
   isRotating = true;
   map.dragPan.disable();
