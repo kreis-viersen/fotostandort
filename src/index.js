@@ -428,16 +428,16 @@ map.on('load', function () {
     map.setLayoutProperty("osm", 'visibility', 'visible');
     map.setLayoutProperty("dop", 'visibility', 'none');
     map.setLayoutProperty("vdop", 'visibility', 'none');
-    document.getElementById('dop').className = 'btn-control btn2'
-    this.className = 'btn-control active';
+    document.getElementById('dop').classList.remove('active');
+    this.classList.add('active');
   });
 
   document.getElementById('dop').addEventListener('click', function (e) {
     map.setLayoutProperty("osm", 'visibility', 'none');
     map.setLayoutProperty("dop", 'visibility', 'visible');
     map.setLayoutProperty("vdop", 'visibility', 'visible');
-    document.getElementById('osm').className = 'btn-control'
-    this.className = 'btn-control btn2 active';
+    document.getElementById('osm').classList.remove('active');
+    this.classList.add('active');
   });
 
 });
@@ -516,25 +516,25 @@ map.on('zoom', () => {
 
 function stopRotation() {
 
-    if (!isRotating) {
-        return;
-    }
+  if (!isRotating) {
+    return;
+  }
 
-    isRotating = false;
+  isRotating = false;
 
-    map.dragPan.enable();
-    map.getCanvas().style.cursor = '';
+  map.dragPan.enable();
+  map.getCanvas().style.cursor = '';
 
-    const marker = currentMarkers[0];
-    if (!marker) return;
+  const marker = currentMarkers[0];
+  if (!marker) return;
 
-    updateExifAndImage(
-        exif,
-        image,
-        file,
-        marker.getLngLat(),
-        heading
-    );
+  updateExifAndImage(
+    exif,
+    image,
+    file,
+    marker.getLngLat(),
+    heading
+  );
 }
 
 // function for updating the info text (lat, lon, heading)

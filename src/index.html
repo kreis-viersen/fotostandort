@@ -17,6 +17,10 @@
 			bottom: 0;
 			width: 100%;
 		}
+
+		#save {
+			display: none;
+		}
 	</style>
 </head>
 
@@ -77,36 +81,35 @@
 			display: none;
 		}
 
-		.btn-control {
-			font: bold 12px/20px, Arial, Helvetica, sans-serif;
-			background-color: #fff;
+		.control-panel {
 			position: absolute;
-			top: 110px;
+			top: 10px;
 			left: 10px;
-			z-index: 1;
-			border: none;
-			width: 150px;
-			margin-left: 0px;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+			padding: 10px;
+			background: rgba(255, 255, 255, 0.5);
+			backdrop-filter: blur(6px);
+			-webkit-backdrop-filter: blur(6px);
+			border: 1px solid rgba(0, 0, 0, 0.15);
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+			z-index: 2;
+		}
+
+		.btn-control {
+			font: bold 12px/20px Arial, Helvetica, sans-serif;
+			background-color: #fff;
+			width: 210px;
+			box-sizing: border-box;
 			display: block;
 			cursor: pointer;
-			padding: 5px 20px;
+			padding: 6px 12px;
 			border: 1px solid rgba(0, 0, 0, 0.4);
+			border-radius: 4px;
 			color: #404040;
 		}
-
-		.btn2 {
-			top: 140px;
-		}
-
-		.btn3 {
-			top: 10px;
-		}
-
-		.btn4 {
-			top: 40px;
-			display: none;
-		}
-
 
 		.btn-control.active {
 			background-color: #3887be;
@@ -135,14 +138,64 @@
 			border-radius: 1px;
 			border: 1px solid rgba(0, 0, 0, 0.4);
 		}
+
+		.layer-switch-label {
+			margin-top: 6px;
+			font: bold 13px Arial, Helvetica, sans-serif;
+			color: #555;
+		}
+
+		.layer-switch {
+			display: flex;
+			width: 210px;
+			box-sizing: border-box;
+			overflow: hidden;
+			border: 1px solid rgba(0, 0, 0, 0.4);
+			border-radius: 4px;
+			background: white;
+		}
+
+		.layer-btn {
+			flex: 1;
+			padding: 8px 10px;
+			border: none;
+			background: white;
+			cursor: pointer;
+			font: bold 12px Arial, Helvetica, sans-serif;
+			color: #404040;
+		}
+
+		.layer-btn:first-child {
+			border-right: 1px solid rgba(0, 0, 0, .2);
+		}
+
+		.layer-btn:hover {
+			background: #f2f2f2;
+		}
+
+		.layer-btn.active {
+			background: #3887be;
+			color: white;
+		}
 	</style>
 	<div id="map"></div>
 	<div id="image" class="textInfo imagediv"></div>
 	<input id="input" type="file" accept="image/*" class="input" hidden />
-	<button id='osm' class='btn-control active'>OpenStreetMap</button>
-	<button id='dop' class='btn-control btn2'>DOP/vDOP NRW</button>
-	<button id='select' class='btn-control btn3'>Bild auswählen</button>
-	<button id='save' class='btn-control btn4'>Bild speichern</button>
+
+	<div class="control-panel">
+		<button id='select' class='btn-control btn3'>Bild auswählen</button>
+		<button id='save' class='btn-control btn4'>Bild speichern</button>
+		<div class="layer-switch-label">Hintergrund</div>
+
+		<div class="layer-switch">
+			<button id="osm" class="layer-btn active">
+				OpenStreetMap
+			</button>
+			<button id="dop" class="layer-btn">
+				Luftbild NRW
+			</button>
+		</div>
+	</div>
 	<pre id="textInfo" class="textInfo"></pre>
 
 	<!--
