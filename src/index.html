@@ -27,19 +27,9 @@
 <body>
 	<style>
 		.textInfo {
-			font: bold 12px/20px, Arial, Helvetica, sans-serif;
+			font: 16px Arial, Helvetica, sans-serif;
 			color: #404040;
-			background-color: #fff;
-			position: absolute;
-			bottom: 10px;
-			left: 10px;
-			padding: 5px 10px;
-			margin: 0;
-			font-size: 16px;
-			border: 1px solid rgba(0, 0, 0, 0.4);
-			display: none;
-			width: 270px;
-			z-index: 1;
+			width: 100%;
 		}
 
 		.textInfo table {
@@ -58,44 +48,61 @@
 		}
 
 		.imagediv {
-			padding: 10px 10px 0px 10px;
-			bottom: 70px;
-			width: 270px;
-			visibility: hidden;
+			width: 100%;
 			display: flex;
 			flex-direction: column;
-			justify-content: center;
 			align-items: center;
 		}
 
-		p {
-			font: bold 12px/20px, Arial, Helvetica, sans-serif;
-			font-size: 16px;
+		.imagediv img {
+			display: block;
+			max-width: 100%;
+			height: auto;
+			border-radius: 4px;
+		}
+
+		.imagediv p {
+			width: 100%;
+			margin: 8px 0 0;
+			font: bold 14px/20px Arial, Helvetica, sans-serif;
 			color: #404040;
-			background-color: #fff;
-			inline-size: 250px;
-			overflow-wrap: break-word;
+			overflow-wrap: anywhere;
+			text-align: center;
 		}
 
 		.input {
 			display: none;
 		}
 
-		.control-panel {
+		.control-panel,
+		.info-panel {
 			position: absolute;
-			top: 10px;
-			left: 10px;
 			display: flex;
 			flex-direction: column;
 			gap: 8px;
 			padding: 10px;
+
 			background: rgba(255, 255, 255, 0.5);
 			backdrop-filter: blur(6px);
 			-webkit-backdrop-filter: blur(6px);
+
 			border: 1px solid rgba(0, 0, 0, 0.15);
 			border-radius: 8px;
 			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+
 			z-index: 2;
+		}
+
+		.control-panel {
+			top: 10px;
+			left: 10px;
+		}
+
+		.info-panel {
+			left: 10px;
+			bottom: 10px;
+			width: 290px;
+			display: none;
 		}
 
 		.btn-control {
@@ -212,7 +219,6 @@
 		}
 	</style>
 	<div id="map"></div>
-	<div id="image" class="textInfo imagediv"></div>
 	<input id="input" type="file" accept="image/*" class="input" hidden />
 
 	<div class="control-panel">
@@ -224,8 +230,8 @@
 				<div class="title-sub">NRW</div>
 			</div>
 		</div>
-		<button id='select' class='btn-control btn3'>Bild auswählen</button>
-		<button id='save' class='btn-control btn4'>Bild speichern</button>
+		<button id='select' class='btn-control'>Bild auswählen</button>
+		<button id='save' class='btn-control'>Bild speichern</button>
 		<div class="layer-switch-label">Hintergrund</div>
 
 		<div class="layer-switch">
@@ -237,7 +243,10 @@
 			</button>
 		</div>
 	</div>
-	<pre id="textInfo" class="textInfo"></pre>
+	<div id="info-panel" class="info-panel">
+		<div id="image" class="imagediv"></div>
+		<div id="textInfo" class="textInfo"></div>
+	</div>
 
 	<!--
 	https://github.com/tholman/github-corners

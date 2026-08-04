@@ -4,6 +4,10 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 const piexif = require('piexifjs');
 
 const inputElement = document.getElementById('input');
+const infoPanel = document.getElementById('info-panel');
+const imageDiv = document.getElementById('image');
+const textInfo = document.getElementById('textInfo');
+
 inputElement.addEventListener('change', uploadImage, false);
 
 document.getElementById('select').addEventListener('click', selectImage);
@@ -155,6 +159,7 @@ function dataURLtoBlob(dataUrl) {
 function uploadImage(e) {
 
   resetSaveButton();
+  infoPanel.style.display = 'none';
 
   // remove old markers
   currentMarkers.forEach(m => m.remove());
@@ -186,16 +191,17 @@ function uploadImage(e) {
       );
     }
 
-    var imagediv = document.getElementById('image')
-    imagediv.innerHTML = '<img src="' + image + '" width="270" /><p>' + file.name + '</p>';
-    imagediv.style.visibility = 'visible';
+    imageDiv.innerHTML =
+      '<img src="' + image + '" alt="Bildvorschau">' +
+      '<p>' + file.name + '</p>';
 
     const status = analyzeExif(image);
 
     if (!showExifDialog(status)) {
+      imageDiv.replaceChildren();
       return;
     }
-
+    infoPanel.style.display = 'flex';
     exif = status.exif;
 
     if (!exif.GPS) {
@@ -254,7 +260,6 @@ function uploadImage(e) {
     }
 
     // set info text
-    textInfo.style.display = 'block';
     updateTextInfo({ lng: lon, lat: lat }, heading);
 
 
