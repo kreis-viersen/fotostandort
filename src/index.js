@@ -445,25 +445,23 @@ map.on('load', function () {
 // triggers the rotation of the direction cone
 // rotation is only triggered in the area of the cone not covered by the position marker
 map.on('mousedown', 'directionConeLayer', (e) => {
-
   const marker = currentMarkers[0];
   if (!marker) return;
 
-  const markerPos = marker.getLngLat();
-  const markerPixel = map.project(markerPos);
-  const clickPixel = map.project(e.lngLat);
+  const markerElement = marker.getElement();
+  const markerRect = markerElement.getBoundingClientRect();
 
-  const dx = clickPixel.x - markerPixel.x;
-  const dy = clickPixel.y - markerPixel.y;
+  const mouseEvent = e.originalEvent;
 
-  const distPx = Math.sqrt(dx * dx + dy * dy);
+  const clickInsideMarker =
+    mouseEvent.clientX >= markerRect.left &&
+    mouseEvent.clientX <= markerRect.right &&
+    mouseEvent.clientY >= markerRect.top &&
+    mouseEvent.clientY <= markerRect.bottom;
 
-  // get height of marker
-  const el = marker.getElement();
-  const rect = el.getBoundingClientRect();
-
-  // rotation not triggered 'behind' the marker
-  if (distPx < rect.height * 0.9) return;
+  if (clickInsideMarker) {
+    return;
+  }
 
   isRotating = true;
   map.dragPan.disable();
