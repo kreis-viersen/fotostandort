@@ -8,12 +8,11 @@ inputElement.addEventListener('change', uploadImage, false);
 
 document.getElementById('select').addEventListener('click', selectImage);
 
-function removeListeners() {
-  // https: //stackoverflow.com/questions/9251837/how-to-remove-all-listeners-in-an-element
-  var old_element = document.getElementById("save");
-  var new_element = old_element.cloneNode(true);
-  old_element.parentNode.replaceChild(new_element, old_element);
-  document.getElementById('save').style.display = 'none';
+
+function resetSaveButton() {
+  const saveButton = document.getElementById("save");
+  saveButton.onclick = null;
+  saveButton.style.display = "none";
 }
 
 function selectImage() {
@@ -114,6 +113,14 @@ function convertToJpeg(dataUrl) {
       canvas.height = img.naturalHeight;
 
       const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        reject(new Error("Canvas-Kontext konnte nicht erstellt werden."));
+        return;
+      }
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0);
 
       const jpegDataUrl = canvas.toDataURL(
@@ -147,7 +154,7 @@ function dataURLtoBlob(dataUrl) {
 
 function uploadImage(e) {
 
-  removeListeners()
+  resetSaveButton();
 
   // remove old markers
   currentMarkers.forEach(m => m.remove());
@@ -157,7 +164,13 @@ function uploadImage(e) {
   if (map.getLayer('directionConeLayer')) map.removeLayer('directionConeLayer');
   if (map.getSource('directionCone')) map.removeSource('directionCone');
 
-  file = e.target.files[0];
+  const selectedFile = e.target.files?.[0];
+
+  if (!selectedFile) {
+    return;
+  }
+
+  file = selectedFile;
   let reader = new FileReader();
 
   reader.onload = async (e) => {
@@ -258,6 +271,14 @@ function uploadImage(e) {
     // set direction cone
     const cone = createDirectionCone(lon, lat, heading);
 
+    updateExifAndImage(
+      exif,
+      image,
+      file,
+      marker.getLngLat(),
+      heading
+    );
+
     map.addSource('directionCone', {
       type: 'geojson',
       data: cone
@@ -308,7 +329,7 @@ function uploadImage(e) {
 function createDirectionCone(lon, lat, heading, pixelLength = 0.3, angle = 25, steps = 50) {
 
   const zoom = map.getZoom();
-  const metersPerPixel = getMetersPerPixel(lat, zoom);
+  const metersPerPixel = getScaledConeLength(lat, zoom);
   const lengthInMeters = pixelLength * metersPerPixel;
 
   const earthRadius = 6378137;
@@ -350,7 +371,8 @@ var map = new maplibregl.Map({
       osm: {
         type: "raster",
         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-        tileSize: 256
+        tileSize: 256,
+        attribution: '© OpenStreetMap contributors'
       }
     },
     layers: [{ id: "osm", type: "raster", source: "osm" }]
@@ -361,9 +383,9 @@ var map = new maplibregl.Map({
 var control = new maplibregl.NavigationControl({
   showCompass: false
 });
-map.addControl(control);
+map.addControl(control, 'top-left');
 
-control._container.parentNode.className = "maplibregl-ctrl-left"
+//control._container.parentNode.className = "maplibregl-ctrl-left"
 
 map.dragRotate.disable();
 map.touchZoomRotate.disableRotation();
@@ -475,20 +497,9 @@ map.on('mousemove', (e) => {
 });
 
 // stops the rotation of the direction cone and updates exif
-map.on('mouseup', () => {
-  if (isRotating) {
-    isRotating = false;
-    map.dragPan.enable();
-    map.getCanvas().style.cursor = '';
+map.on('mouseup', stopRotation);
+window.addEventListener('mouseup', stopRotation);
 
-    const marker = currentMarkers[0];
-    if (!marker) return;
-
-    const lngLat = marker.getLngLat();
-
-    updateExifAndImage(exif, image, file, lngLat, heading);
-  }
-});
 
 // updates size of the direction cone
 map.on('zoom', () => {
@@ -502,6 +513,29 @@ map.on('zoom', () => {
     source.setData(createDirectionCone(pos.lng, pos.lat, heading));
   }
 });
+
+function stopRotation() {
+
+    if (!isRotating) {
+        return;
+    }
+
+    isRotating = false;
+
+    map.dragPan.enable();
+    map.getCanvas().style.cursor = '';
+
+    const marker = currentMarkers[0];
+    if (!marker) return;
+
+    updateExifAndImage(
+        exif,
+        image,
+        file,
+        marker.getLngLat(),
+        heading
+    );
+}
 
 // function for updating the info text (lat, lon, heading)
 function updateTextInfo(pos, heading) {
@@ -545,22 +579,25 @@ function updateExifAndImage(exif, image, file, lngLat, heading) {
     Math.round(heading * 100),
     100
   ];
+  exif.GPS[piexif.GPSIFD.GPSImgDirectionRef] = 'T';
 
   // image with updated exif data
   const newExifBinary = piexif.dump(exif);
   const newPhoto = piexif.insert(newExifBinary, image);
 
-  removeListeners();
+  resetSaveButton();
 
-  document.getElementById('save').addEventListener('click', () => {
+  const saveButton = document.getElementById("save");
+
+  saveButton.onclick = () => {
     FileSaver.saveAs(newPhoto, file.name);
-  });
+  };
 
-  document.getElementById('save').style.display = 'block';
+  saveButton.style.display = "block";
 }
 
 // helper function: gets meters per pixel in a scaled manner
-function getMetersPerPixel(lat, zoom) {
+function getScaledConeLength(lat, zoom) {
   return (156543.03392 * Math.cos(lat * Math.PI / 180)) /
     Math.pow(2, zoom * 0.5);
 }
