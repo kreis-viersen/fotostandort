@@ -34,13 +34,18 @@ module.exports = {
     rules: [{
       test: /\.css$/i,
       use: ['style-loader', 'css-loader'],
-    }, ],
+    },],
   },
   plugins: [
     new CopyPlugin({
-      patterns: [{
+      patterns: [
+        {
           from: './LICENSE',
           to: 'fotostandort_license.txt'
+        },
+        {
+          from: './src/assets/icon_fotostandort.png',
+          to: 'assets/icon_fotostandort.png'
         }
       ],
     }),

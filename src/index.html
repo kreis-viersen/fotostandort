@@ -125,8 +125,8 @@
 		}
 
 		.maplibregl-ctrl-top-left {
-			top: 180px;
-			left: 10px;
+			top: 280px;
+			left: 0px;
 		}
 
 		.maplibregl-ctrl-top-left .maplibregl-ctrl {
@@ -177,12 +177,53 @@
 			background: #3887be;
 			color: white;
 		}
+
+		.panel-header {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+
+			margin-bottom: 8px;
+		}
+
+		.panel-header img {
+			width: 60px;
+			height: 60px;
+
+			flex-shrink: 0;
+		}
+
+		.panel-title {
+			display: flex;
+			margin-left: -6px;
+			flex-direction: column;
+		}
+
+		.title-main {
+			font: bold 22px Arial, Helvetica, sans-serif;
+			color: #404040;
+			line-height: 1.1;
+		}
+
+		.title-sub {
+			font: bold 14px Arial, Helvetica, sans-serif;
+			color: #3887be;
+			letter-spacing: 1px;
+		}
 	</style>
 	<div id="map"></div>
 	<div id="image" class="textInfo imagediv"></div>
 	<input id="input" type="file" accept="image/*" class="input" hidden />
 
 	<div class="control-panel">
+		<div class="panel-header">
+			<img src="assets/icon_fotostandort.png" alt="Fotostandort">
+
+			<div class="panel-title">
+				<div class="title-main">Fotostandort</div>
+				<div class="title-sub">NRW</div>
+			</div>
+		</div>
 		<button id='select' class='btn-control btn3'>Bild auswählen</button>
 		<button id='save' class='btn-control btn4'>Bild speichern</button>
 		<div class="layer-switch-label">Hintergrund</div>
