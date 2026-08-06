@@ -30,6 +30,7 @@ let isRotating = false;
 let exif = null;
 let image = null;
 let file = null;
+let helpPopup = null;
 
 function analyzeExif(image) {
 
@@ -165,6 +166,12 @@ function uploadImage(e) {
   currentMarkers.forEach(m => m.remove());
   currentMarkers = [];
 
+  // remove old help popup
+  if (helpPopup) {
+    helpPopup.remove();
+    helpPopup = null;
+  }
+
   // remove old direction cone
   if (map.getLayer('directionConeLayer')) map.removeLayer('directionConeLayer');
   if (map.getSource('directionCone')) map.removeSource('directionCone');
@@ -245,7 +252,7 @@ function uploadImage(e) {
 
       lat = 51.258812;
       lon = 6.391263;
-      flyToZoom = 11;
+      flyToZoom = 13;
     }
 
     if (status.hasDirection &&
@@ -256,7 +263,7 @@ function uploadImage(e) {
 
     } else {
 
-      heading = 0;
+      heading = 180;
     }
 
     // set info text
@@ -272,6 +279,9 @@ function uploadImage(e) {
       .addTo(map);
 
     currentMarkers.push(marker);
+
+    // place tutorial/instruction popup
+    showMarkerHelp(marker);
 
     // set direction cone
     const cone = createDirectionCone(lon, lat, heading);
@@ -327,6 +337,76 @@ function uploadImage(e) {
   };
 
   reader.readAsDataURL(file);
+}
+
+
+function showMarkerHelp(marker) {
+
+  if (helpPopup) {
+    helpPopup.remove();
+  }
+
+  const popupContent = document.createElement('div');
+  popupContent.className = 'marker-help';
+
+  popupContent.innerHTML = `
+    <div class="marker-help-title">
+      Position und Blickrichtung anpassen
+    </div>
+
+    <div class="marker-help-section">
+      <span class="marker-help-icon">↕</span>
+      <span>
+        Bewegen Sie den roten Marker per Drag-and-Drop an die
+        tatsächliche Aufnahmeposition.
+      </span>
+    </div>
+
+    <div class="marker-help-section">
+      <span class="marker-help-icon">↻</span>
+      <span>
+        Drehen Sie den blauen Sichtkegel um den Marker, um die
+        Blickrichtung anzupassen.
+      </span>
+    </div>
+
+    <div class="marker-help-note">
+      Orientieren Sie sich dabei an der Bildvorschau. Darunter werden
+      Position und Blickrichtung fortlaufend aktualisiert.
+    </div>
+
+    <button type="button" class="marker-help-close">
+      Verstanden
+    </button>
+  `;
+
+  helpPopup = new maplibregl.Popup({
+    closeButton: true,
+    closeOnClick: false,
+    offset: 35,
+    maxWidth: '330px',
+    className: 'marker-help-popup'
+  })
+    .setDOMContent(popupContent)
+    .setLngLat(marker.getLngLat())
+    .addTo(map);
+
+  marker.on('drag', () => {
+    if (helpPopup) {
+      helpPopup.setLngLat(marker.getLngLat());
+    }
+  });
+
+  popupContent
+    .querySelector('.marker-help-close')
+    .addEventListener('click', () => {
+      helpPopup?.remove();
+      helpPopup = null;
+    });
+
+  helpPopup.on('close', () => {
+    helpPopup = null;
+  });
 }
 
 // function creates a cone-shaped polygon on a map that represents field of view

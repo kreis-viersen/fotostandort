@@ -217,6 +217,98 @@
 			color: #3C7aab;
 			letter-spacing: 1px;
 		}
+
+		.marker-help-popup .maplibregl-popup-content {
+			padding: 0;
+			border-radius: 8px;
+			box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25);
+			overflow: hidden;
+		}
+
+		.marker-help-popup .maplibregl-popup-close-button {
+			top: 4px;
+			right: 6px;
+			width: 26px;
+			height: 26px;
+			border-radius: 50%;
+			font-size: 20px;
+			line-height: 20px;
+			color: #555;
+		}
+
+		.marker-help-popup .maplibregl-popup-close-button:hover {
+			background: rgba(0, 0, 0, 0.08);
+		}
+
+		.marker-help {
+			width: 290px;
+			padding: 14px;
+			box-sizing: border-box;
+			font: 13px/18px Arial, Helvetica, sans-serif;
+			color: #404040;
+			background: white;
+		}
+
+		.marker-help-title {
+			padding-right: 24px;
+			margin-bottom: 12px;
+			font-size: 15px;
+			font-weight: bold;
+			color: #404040;
+		}
+
+		.marker-help-section {
+			display: flex;
+			align-items: flex-start;
+			gap: 9px;
+			margin-bottom: 10px;
+		}
+
+		.marker-help-icon {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex: 0 0 26px;
+			width: 26px;
+			height: 26px;
+			border-radius: 50%;
+			background: #3887be;
+			color: white;
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.marker-help-note {
+			margin-top: 4px;
+			padding: 9px;
+			border-left: 3px solid #3887be;
+			background: #f2f6f9;
+			font-size: 12px;
+			line-height: 17px;
+		}
+
+		.marker-help-close {
+			display: block;
+			width: 100%;
+			margin-top: 12px;
+			padding: 7px 12px;
+			border: 1px solid rgba(0, 0, 0, 0.4);
+			border-radius: 4px;
+			background: white;
+			color: #404040;
+			cursor: pointer;
+			font: bold 12px Arial, Helvetica, sans-serif;
+		}
+
+		.marker-help-close:hover {
+			background: #f2f2f2;
+		}
+
+		@media (max-width: 500px) {
+			.marker-help {
+				width: 250px;
+			}
+		}
 	</style>
 	<div id="map"></div>
 	<input id="input" type="file" accept="image/*" class="input" hidden />
