@@ -31,6 +31,7 @@ let exif = null;
 let image = null;
 let file = null;
 let helpPopup = null;
+let rotationOffset = 0;
 
 function analyzeExif(image) {
 
@@ -548,6 +549,23 @@ map.on('mousedown', 'directionConeLayer', (e) => {
     return;
   }
 
+  const pos = marker.getLngLat();
+
+  const dx = e.lngLat.lng - pos.lng;
+  const dy = e.lngLat.lat - pos.lat;
+
+  let cursorAngle = Math.atan2(dx, dy) * 180 / Math.PI;
+
+  if (cursorAngle < 0) {
+    cursorAngle += 360;
+  }
+
+  /*
+   * Abstand zwischen der aktuellen Mittelrichtung des Kegels
+   * und der angeklickten Position merken.
+   */
+  rotationOffset = heading - cursorAngle;
+
   isRotating = true;
   map.dragPan.disable();
   map.getCanvas().style.cursor = 'grabbing';
@@ -567,15 +585,25 @@ map.on('mousemove', (e) => {
   const dx = e.lngLat.lng - pos.lng;
   const dy = e.lngLat.lat - pos.lat;
 
-  let angle = Math.atan2(dx, dy) * 180 / Math.PI;
-  if (angle < 0) angle += 360;
+  let cursorAngle = Math.atan2(dx, dy) * 180 / Math.PI;
 
-  heading = angle;
+  if (cursorAngle < 0) {
+    cursorAngle += 360;
+  }
+
+  heading = cursorAngle + rotationOffset;
+
+  // Winkel wieder in den Bereich 0 bis unter 360 bringen
+  heading = ((heading % 360) + 360) % 360;
 
   const source = map.getSource('directionCone');
+
   if (source) {
-    source.setData(createDirectionCone(pos.lng, pos.lat, heading));
+    source.setData(
+      createDirectionCone(pos.lng, pos.lat, heading)
+    );
   }
+
   updateTextInfo(pos, heading);
 });
 
