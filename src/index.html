@@ -402,6 +402,18 @@
 		.dialog-btn-primary:hover {
 			background: #2f74a5;
 		}
+
+		@media (max-height: 750px) {
+
+			.info-panel {
+				top: 360px;
+				bottom: auto;
+
+				max-height: calc(100vh - 380px);
+				overflow-y: auto;
+			}
+
+		}
 	</style>
 </head>
 
