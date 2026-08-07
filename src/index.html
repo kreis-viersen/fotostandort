@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 
 <head>
 	<meta charset="utf-8" />
@@ -13,7 +13,7 @@
 
 		#map {
 			position: absolute;
-			top: 0px;
+			top: 0;
 			bottom: 0;
 			width: 100%;
 		}
@@ -21,11 +21,7 @@
 		#save {
 			display: none;
 		}
-	</style>
-</head>
 
-<body>
-	<style>
 		.textInfo {
 			font: 16px Arial, Helvetica, sans-serif;
 			color: #404040;
@@ -81,15 +77,12 @@
 			flex-direction: column;
 			gap: 8px;
 			padding: 10px;
-
 			background: rgba(255, 255, 255, 0.5);
 			backdrop-filter: blur(6px);
 			-webkit-backdrop-filter: blur(6px);
-
 			border: 1px solid rgba(0, 0, 0, 0.15);
 			border-radius: 8px;
 			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-
 			z-index: 2;
 		}
 
@@ -131,9 +124,34 @@
 			background-color: #3887be;
 		}
 
+		.orientation-option {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			width: 210px;
+			box-sizing: border-box;
+			margin-top: 10px;
+			margin-bottom: 14px;
+			padding-top: 10px;
+			border-top: 1px solid rgba(0, 0, 0, 0.15);
+			color: #555;
+			font: bold 13px/20px Arial, Helvetica, sans-serif;
+			cursor: pointer;
+		}
+
+		.orientation-option:has(input:disabled) {
+			opacity: 0.55;
+			cursor: default;
+		}
+
+		.orientation-option input {
+			margin: 0;
+			accent-color: #3887be;
+		}
+
 		.maplibregl-ctrl-top-left {
-			top: 280px;
-			left: 0px;
+			top: 320px;
+			left: 0;
 		}
 
 		.maplibregl-ctrl-top-left .maplibregl-ctrl {
@@ -189,14 +207,12 @@
 			display: flex;
 			align-items: center;
 			gap: 12px;
-
 			margin-bottom: 8px;
 		}
 
 		.panel-header img {
 			width: 60px;
 			height: 60px;
-
 			flex-shrink: 0;
 		}
 
@@ -304,12 +320,92 @@
 			background: #f2f2f2;
 		}
 
-		@media (max-width: 500px) {
-			.marker-help {
-				width: 250px;
-			}
+		.exif-dialog {
+			width: min(460px, calc(100% - 30px));
+			padding: 0;
+			border: none;
+			border-radius: 8px;
+			box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+			color: #404040;
+		}
+
+		.exif-dialog::backdrop {
+			background: rgba(0, 0, 0, 0.35);
+			backdrop-filter: blur(2px);
+		}
+
+		.exif-dialog-content {
+			padding: 20px;
+			font: 14px/20px Arial, Helvetica, sans-serif;
+		}
+
+		.exif-dialog-header {
+			display: flex;
+			align-items: flex-start;
+			gap: 12px;
+		}
+
+		.exif-dialog-icon {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex: 0 0 28px;
+			width: 28px;
+			height: 28px;
+			border-radius: 50%;
+			background: #3887be;
+			color: white;
+			font: bold 17px Arial, Helvetica, sans-serif;
+		}
+
+		.exif-dialog-title {
+			margin-bottom: 8px;
+			font: bold 17px Arial, Helvetica, sans-serif;
+		}
+
+		.exif-dialog-message p {
+			margin: 0 0 10px;
+		}
+
+		.exif-dialog-message p:last-child {
+			margin-bottom: 0;
+		}
+
+		.exif-dialog-buttons {
+			display: flex;
+			justify-content: flex-end;
+			flex-wrap: wrap;
+			gap: 8px;
+			margin-top: 20px;
+		}
+
+		.dialog-btn {
+			padding: 7px 14px;
+			border: 1px solid rgba(0, 0, 0, 0.35);
+			border-radius: 4px;
+			background: white;
+			color: #404040;
+			cursor: pointer;
+			font: bold 12px Arial, Helvetica, sans-serif;
+		}
+
+		.dialog-btn:hover {
+			background: #f2f2f2;
+		}
+
+		.dialog-btn-primary {
+			border-color: #3887be;
+			background: #3887be;
+			color: white;
+		}
+
+		.dialog-btn-primary:hover {
+			background: #2f74a5;
 		}
 	</style>
+</head>
+
+<body>
 	<div id="map"></div>
 	<input id="input" type="file" accept="image/*" class="input" hidden />
 
@@ -322,23 +418,41 @@
 				<div class="title-sub">by Kreis Viersen</div>
 			</div>
 		</div>
-		<button id='select' class='btn-control'>Bild auswählen</button>
-		<button id='save' class='btn-control'>Bild speichern</button>
+
+		<button id="select" type="button" class="btn-control">Bild auswählen</button>
+		<button id="save" type="button" class="btn-control">Bild speichern</button>
+
+		<label class="orientation-option" for="orientation">
+			<input id="orientation" type="checkbox" disabled>
+			<span>Orientierung setzen</span>
+		</label>
+
 		<div class="layer-switch-label">Hintergrund</div>
 
 		<div class="layer-switch">
-			<button id="osm" class="layer-btn active">
-				OpenStreetMap
-			</button>
-			<button id="dop" class="layer-btn">
-				Luftbild NRW
-			</button>
+			<button id="osm" type="button" class="layer-btn active">OpenStreetMap</button>
+			<button id="dop" type="button" class="layer-btn">Luftbild NRW</button>
 		</div>
 	</div>
+
 	<div id="info-panel" class="info-panel">
 		<div id="image" class="imagediv"></div>
 		<div id="textInfo" class="textInfo"></div>
 	</div>
+
+
+	<dialog id="exif-dialog" class="exif-dialog">
+		<div class="exif-dialog-content">
+			<div class="exif-dialog-header">
+				<div class="exif-dialog-icon">i</div>
+				<div>
+					<div id="exif-dialog-title" class="exif-dialog-title"></div>
+					<div id="exif-dialog-message" class="exif-dialog-message"></div>
+				</div>
+			</div>
+			<div id="exif-dialog-buttons" class="exif-dialog-buttons"></div>
+		</div>
+	</dialog>
 
 	<!--
 	https://github.com/tholman/github-corners
