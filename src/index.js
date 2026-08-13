@@ -594,8 +594,18 @@ function closeHelpPopup() {
 
 // function creates a cone-shaped polygon on a map that represents field of view
 // output: GeoJSON polygon
-function createDirectionCone(lon, lat, heading, pixelLength = 0.3, angle = 25, steps = 50) {
+function createDirectionCone(lon, lat, heading, pixelLength = null, angle = 25, steps = 50) {
 
+  // determine pixel length (size of cone) based on screen size if not provided
+  if (pixelLength === null) {
+    
+    // same rule as in css
+    pixelLength = window.matchMedia('(max-width: 600px), (max-height: 750px)').matches
+      ? 0.18
+      : 0.3;
+    
+  }
+  
   const zoom = map.getZoom();
   const metersPerPixel = getScaledConeLength(lat, zoom);
   const lengthInMeters = pixelLength * metersPerPixel;
@@ -696,31 +706,35 @@ map.on('load', function () {
   });
 });
 
-// triggers the rotation of the direction cone
-// rotation is only triggered in the area of the cone not covered by the position marker
-map.on('mousedown', 'directionConeLayer', (e) => {
+map.on('zoom', () => {
+  const marker = currentMarkers[0];
+  if (!marker || !orientationEnabled) return;
+
+  updateDirectionCone(marker.getLngLat());
+});
+
+// start rotation of the direction cone when the user clicks and drags outside the marker
+function startConeRotation(lngLat, clientX, clientY) {
   if (!orientationEnabled) return;
 
   const marker = currentMarkers[0];
   if (!marker) return;
 
-  const markerElement = marker.getElement();
-  const markerRect = markerElement.getBoundingClientRect();
-  const mouseEvent = e.originalEvent;
+  const markerRect = marker.getElement().getBoundingClientRect();
 
-  const clickInsideMarker =
-    mouseEvent.clientX >= markerRect.left &&
-    mouseEvent.clientX <= markerRect.right &&
-    mouseEvent.clientY >= markerRect.top &&
-    mouseEvent.clientY <= markerRect.bottom;
+  const insideMarker =
+    clientX >= markerRect.left &&
+    clientX <= markerRect.right &&
+    clientY >= markerRect.top &&
+    clientY <= markerRect.bottom;
 
-  if (clickInsideMarker) {
+  if (insideMarker) {
     return;
   }
 
   const pos = marker.getLngLat();
-  const dx = e.lngLat.lng - pos.lng;
-  const dy = e.lngLat.lat - pos.lat;
+  const dx = lngLat.lng - pos.lng;
+  const dy = lngLat.lat - pos.lat;
 
   let cursorAngle = Math.atan2(dx, dy) * 180 / Math.PI;
 
@@ -730,21 +744,23 @@ map.on('mousedown', 'directionConeLayer', (e) => {
 
   rotationOffset = heading - cursorAngle;
   isRotating = true;
+
   map.dragPan.disable();
+  map.touchZoomRotate.disable();
   map.getCanvas().style.cursor = 'grabbing';
+}
 
-  e.preventDefault();
-});
-
-map.on('mousemove', (e) => {
+// updates the heading of the direction cone based on the current mouse position
+function rotateCone(lngLat) {
   if (!isRotating || !orientationEnabled) return;
 
   const marker = currentMarkers[0];
   if (!marker) return;
 
   const pos = marker.getLngLat();
-  const dx = e.lngLat.lng - pos.lng;
-  const dy = e.lngLat.lat - pos.lat;
+
+  const dx = lngLat.lng - pos.lng;
+  const dy = lngLat.lat - pos.lat;
 
   let cursorAngle = Math.atan2(dx, dy) * 180 / Math.PI;
 
@@ -757,17 +773,7 @@ map.on('mousemove', (e) => {
 
   updateDirectionCone(pos);
   updateTextInfo(pos, heading);
-});
-
-map.on('mouseup', stopRotation);
-window.addEventListener('mouseup', stopRotation);
-
-map.on('zoom', () => {
-  const marker = currentMarkers[0];
-  if (!marker || !orientationEnabled) return;
-
-  updateDirectionCone(marker.getLngLat());
-});
+}
 
 // stops the rotation of the direction cone and updates the EXIF data accordingly
 function stopRotation() {
@@ -776,7 +782,11 @@ function stopRotation() {
   }
 
   isRotating = false;
+
   map.dragPan.enable();
+  map.touchZoomRotate.enable();
+  map.touchZoomRotate.disableRotation();
+
   map.getCanvas().style.cursor = '';
 
   const marker = currentMarkers[0];
@@ -790,6 +800,61 @@ function stopRotation() {
     heading
   );
 }
+
+// event listeners for MOUSE interactions to handle rotation of the direction cone
+map.on('mousedown', 'directionConeLayer', (e) => {
+  const event = e.originalEvent;
+
+  startConeRotation(
+    e.lngLat,
+    event.clientX,
+    event.clientY
+  );
+
+  if (isRotating) {
+    e.preventDefault();
+  }
+});
+
+map.on('mousemove', (e) => {
+  rotateCone(e.lngLat);
+});
+
+map.on('mouseup', stopRotation);
+window.addEventListener('mouseup', stopRotation);
+
+// event listeners for TOUCH interactions on mobile devices to handle rotation of the direction cone
+map.on('touchstart', 'directionConeLayer', (e) => {
+  if (!e.points?.length || !e.lngLats?.length) {
+    return;
+  }
+
+  const point = e.points[0];
+  const lngLat = e.lngLats[0];
+
+  const rect = map.getCanvas().getBoundingClientRect();
+
+  startConeRotation(
+    lngLat,
+    rect.left + point.x,
+    rect.top + point.y
+  );
+
+  if (isRotating) {
+    e.preventDefault();
+  }
+});
+
+map.on('touchmove', (e) => {
+  if (!isRotating || !e.lngLats?.length) {
+    return;
+  }
+
+  rotateCone(e.lngLats[0]);
+  e.preventDefault();
+});
+
+map.on('touchend', stopRotation);
 
 // function for updating the info text (lat, lon, heading)
 function updateTextInfo(pos, heading) {
