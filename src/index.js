@@ -8,10 +8,15 @@ const infoPanel = document.getElementById('info-panel');
 const imageDiv = document.getElementById('image');
 const textInfo = document.getElementById('textInfo');
 const orientationElement = document.getElementById('orientation');
+const controlPanel = document.querySelector('.control-panel');
+const panelToggle = document.getElementById('panel-toggle');
 
 inputElement.addEventListener('change', uploadImage, false);
 document.getElementById('select').addEventListener('click', selectImage);
 orientationElement.addEventListener('change', handleOrientationChange);
+panelToggle.addEventListener('click', () => {
+  controlPanel.classList.toggle('collapsed');
+});
 
 function resetSaveButton() {
   const saveButton = document.getElementById('save');
@@ -118,7 +123,7 @@ function showExifDialog(status) {
 }
 
 // if necessary: opens dialog for selecting edit mode (position, orientation or both) 
-function openExifDialog({title, message, buttons}) {
+function openExifDialog({ title, message, buttons }) {
   const dialog = document.getElementById('exif-dialog');
   const titleElement = document.getElementById('exif-dialog-title');
   const messageElement = document.getElementById('exif-dialog-message');
@@ -217,6 +222,8 @@ function resetImageState() {
   orientationEnabled = false;
   orientationHelpShown = false;
 
+  controlPanel.classList.remove('collapsed');
+
   currentMarkers.forEach(marker => marker.remove());
   currentMarkers = [];
 
@@ -264,6 +271,10 @@ function uploadImage(e) {
 
     infoPanel.style.display = 'flex';
     exif = status.exif;
+
+    if (window.matchMedia('(max-width: 600px)').matches) {
+      controlPanel.classList.add('collapsed');
+    }
 
     if (!exif.GPS) {
       exif.GPS = {};
@@ -633,11 +644,6 @@ var map = new maplibregl.Map({
   },
   bounds: [[5.8, 50.3], [9.5, 52.5]]
 });
-
-var control = new maplibregl.NavigationControl({
-  showCompass: false
-});
-map.addControl(control, 'top-left');
 
 map.dragRotate.disable();
 map.touchZoomRotate.disableRotation();
