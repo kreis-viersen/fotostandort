@@ -1,37 +1,46 @@
-publiccodeYmlVersion: "0.4"
-name: "Fotostandort"
-url: "https://gitlab.opencode.de/kreis-viersen/fotostandort"
-landingURL: "https://kreis-viersen.github.io/fotostandort/"
-softwareVersion: "1.0.0"
-releaseDate: "2026-08-20"
+# This repository adheres to the publiccode.yml standard by including this 
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+name: Fotostandort
+url: 'https://gitlab.opencode.de/kreis-viersen/fotostandort'
+landingURL: 'https://kreis-viersen.github.io/fotostandort/'
+softwareVersion: 1.0.0
+releaseDate: '2026-08-20'
 logo: src/assets/icon_fotostandort.png
 platforms:
-- web
+  - web
 usedBy:
-- Kreis Viersen
+  - Kreis Viersen
 categories:
   - geographic-information-systems
   - data-visualization
 developmentStatus: stable
-softwareType: "standalone/web"
+softwareType: standalone/web
+maintenance:
+  type: internal
+  contacts:
+    - name: Kreis Viersen - Amt für Kataster und Geoinformation
+      email: open@kreis-viersen.de
+legal:
+  license: MIT
+intendedAudience:
+  countries:
+    - de
+  scope:
+    - local-authorities
+    - society
 localisation:
   localisationReady: false
   availableLanguages:
     - de
-intendedAudience:
-  countries:
-    - "de"
-  scope:
-    - "local-authorities"
-    - "society"
 description:
   de:
-    genericName: "Geoinformationsanwendung"
-
+    genericName: Geoinformationsanwendung
     shortDescription: >
       Browsertool zum Anzeigen, Verändern und neu Setzen der Aufnahmeposition
       und Orientierung von Bildern.
-
     longDescription: >
       Fotostandort ist eine browserbasierte Kartenanwendung zum Anzeigen,
       Verändern und Setzen der Aufnahmeposition und Orientierung von Bildern.
@@ -41,8 +50,8 @@ description:
 
       Die Aufnahmeposition wird durch einen Marker visualisiert und kann direkt
       in der Karte per Drag-and-Drop verändert werden. Die Orientierung der
-      Aufnahme kann optional über einen Sichtkegel angezeigt und durch
-      freies Drehen verändert werden. Im Informationsbereich werden die ursprünglich im
+      Aufnahme kann optional über einen Sichtkegel angezeigt und durch freies
+      Drehen verändert werden. Im Informationsbereich werden die ursprünglich im
       Bild enthaltenen Werte den neu gesetzten Werten gegenübergestellt.
 
       Bilder ohne vorhandene Positions- oder Orientierungsinformationen können
@@ -58,23 +67,20 @@ description:
       Webbrowser. Die Bilder werden nicht zur Verarbeitung auf einen Server
       übertragen. Nach Abschluss der Bearbeitung kann das Bild mit den
       aktualisierten EXIF-Informationen lokal gespeichert werden.
-
     features:
-      - Darstellung der Aufnahmeposition und -orientierung eines Bildes auf einer interaktiven Karte
-      - Intuitives Verändern oder neu Setzen der Aufnahmeposition und -orientierung
+      - >-
+        Darstellung der Aufnahmeposition und -orientierung eines Bildes auf
+        einer interaktiven Karte
+      - >-
+        Intuitives Verändern oder neu Setzen der Aufnahmeposition und
+        -orientierung
       - Gegenüberstellung der ursprünglichen und neu gesetzten Werte
-      - Speichern des Bildes mit den neu gesetzten Positions- und Orientierungsdaten
+      - >-
+        Speichern des Bildes mit den neu gesetzten Positions- und
+        Orientierungsdaten
       - Auswahl verschiedener Hintergrundkarten
       - Konvertierung unterstützter Bildformate in das JPEG-Format
       - Lokale Verarbeitung der Bilder ohne Upload auf einen Server
       - Bedienung auf Desktop- und mobilen Geräten
-
     screenshots:
-      - "screenshots/screenshot_082026.png"
-legal:
-  license: MIT
-maintenance:
-  type: "internal"
-  contacts:
-    - name: "Kreis Viersen - Amt für Kataster und Geoinformation"
-      email: "open@kreis-viersen.de"
+      - screenshots/screenshot_082026.png
