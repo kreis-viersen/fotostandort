@@ -5,7 +5,7 @@
 publiccodeYmlVersion: '0.2'
 name: Fotostandort
 url: 'https://gitlab.opencode.de/kreis-viersen/fotostandort'
-landingURL: 'https://kreis-viersen.usercontent.opencode.de/fotostandort/'
+landingURL: 'https://kreis-viersen.github.io/fotostandort/'
 softwareVersion: 1.0.0
 releaseDate: '2026-08-20'
 logo: src/assets/icon_fotostandort_small.png
