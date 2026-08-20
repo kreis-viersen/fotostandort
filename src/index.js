@@ -10,12 +10,22 @@ const textInfo = document.getElementById('textInfo');
 const orientationElement = document.getElementById('orientation');
 const controlPanel = document.querySelector('.control-panel');
 const panelToggle = document.getElementById('panel-toggle');
+const imageToggle = document.getElementById('image-toggle');
 
 inputElement.addEventListener('change', uploadImage, false);
 document.getElementById('select').addEventListener('click', selectImage);
 orientationElement.addEventListener('change', handleOrientationChange);
+
 panelToggle.addEventListener('click', () => {
   controlPanel.classList.toggle('collapsed');
+});
+
+imageToggle.addEventListener('click', () => {
+  infoPanel.classList.toggle('image-collapsed');
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  showIntroDialog();
 });
 
 function resetSaveButton() {
@@ -38,10 +48,16 @@ let file = null;
 let helpPopup = null;
 let rotationOffset = 0;
 let orientationEnabled = false;
-let orientationHelpShown = false;
 let originalHasDirection = false;
 let originalDirection = null;
 let originalDirectionRef = null;
+let originalFileType = null;
+let originalLat = null;
+let originalLon = null;
+let originalHeading = null;
+let introDialogShown = false;
+let positionHelpShown = false;
+let orientationHelpShown = false;
 
 // analyzes the image for available EXIF (location and direction information)
 function analyzeExif(image) {
@@ -81,55 +97,50 @@ function analyzeExif(image) {
   };
 }
 
-// decides whether a dialog is needed and returns the selected edit mode
-function showExifDialog(status) {
-  // Fall 1: Position + Orientierung vorhanden -> kein Dialog
-  // Fall 2: nur Position vorhanden -> kein Dialog
-  if (status.hasLocation) {
-    return Promise.resolve(
-      status.hasDirection ? 'position-direction' : 'position'
-    );
+// shows a general introduction dialog once per page session
+function showIntroDialog() {
+  if (introDialogShown) {
+    return Promise.resolve();
   }
 
-  // Fall 3: weder Position noch Orientierung vorhanden
-  if (!status.hasLocation && !status.hasDirection) {
-    return openExifDialog({
-      title: 'Fehlende Position und Orientierung',
-      message: `
-        <p>Dieses Bild enthält weder eine <strong>Position</strong> noch eine <strong>Orientierung</strong>. 
-        Sie haben die Möglichkeit, diese Informationen jetzt hinzuzufügen.</p>
-        <p>Welche Informationen möchten Sie setzen?</p>
-      `,
-      buttons: [
-        { value: 'cancel', label: 'Abbrechen' },
-        { value: 'position', label: 'Position', primary: true },
-        { value: 'position-direction', label: 'Position und Orientierung', primary: true }
-      ]
-    });
-  }
+  introDialogShown = true;
 
-  // Fall 4: nur Orientierung vorhanden
   return openExifDialog({
-    title: 'Fehlende Position',
+    title: 'Fotostandort <span class="dialog-title-sub">by Kreis Viersen</span>',
     message: `
-      <p>Dieses Bild enthält eine Orientierung, aber keine Standortkoordinaten.</p>
-      <p>Möchten Sie eine <strong>Position hinzufügen</strong>?</p>
-    `,
+    <p>
+      Mit dieser Anwendung können Sie die <strong>Aufnahmeposition</strong> und die 
+      <strong>Orientierung</strong> eines Bildes anzeigen, verändern oder neu setzen.
+    </p>
+
+    <p>
+      Sobald Sie ein Bild ausgewählt haben, erscheint unten links eine 
+      <strong>Bildvorschau mit Informationsfeld</strong>. Dort werden die 
+      <strong>ursprünglichen</strong> und die <strong>neu gesetzten Werte</strong> 
+      gegenübergestellt. Sind im ausgewählten Bild keine entsprechenden Informationen 
+      vorhanden, werden die ursprünglichen Werte mit „—“ dargestellt.
+    </p>
+
+    <div class="dialog-hint">
+      Bilder, die nicht im <strong>JPEG-Format</strong> 
+      vorliegen, werden beim Laden automatisch in dieses Format konvertiert. 
+      Auch diese Änderung wird im Informationsfeld angezeigt.
+    </div>
+  `,
     buttons: [
-      { value: 'cancel', label: 'Abbrechen' },
-      { value: 'position-direction', label: 'Position hinzufügen', primary: true }
+      { value: 'ok', label: 'Verstanden', primary: true }
     ]
-  });
+  }).then(() => undefined);
 }
 
-// if necessary: opens dialog for selecting edit mode (position, orientation or both) 
+// opens the general information dialog
 function openExifDialog({ title, message, buttons }) {
   const dialog = document.getElementById('exif-dialog');
   const titleElement = document.getElementById('exif-dialog-title');
   const messageElement = document.getElementById('exif-dialog-message');
   const buttonContainer = document.getElementById('exif-dialog-buttons');
 
-  titleElement.textContent = title;
+  titleElement.innerHTML = title;
   messageElement.innerHTML = message;
   buttonContainer.replaceChildren();
 
@@ -167,6 +178,20 @@ function openExifDialog({ title, message, buttons }) {
 
     dialog.showModal();
   });
+}
+
+// returns a short display name for the file type
+function getFileType(file) {
+  if (file?.type) {
+    const subtype = file.type.split('/')[1];
+
+    if (subtype) {
+      return subtype.toUpperCase().replace('JPEG', 'JPG');
+    }
+  }
+
+  const extension = file?.name?.split('.').pop();
+  return extension ? extension.toUpperCase() : 'Unbekannt';
 }
 
 // converts an image to JPEG format if it is not already in that format
@@ -220,7 +245,11 @@ function resetImageState() {
   orientationElement.checked = false;
   orientationElement.disabled = true;
   orientationEnabled = false;
-  orientationHelpShown = false;
+
+  originalFileType = null;
+  originalLat = null;
+  originalLon = null;
+  originalHeading = null;
 
   controlPanel.classList.remove('collapsed');
 
@@ -242,12 +271,20 @@ function uploadImage(e) {
   }
 
   file = selectedFile;
+  originalFileType = getFileType(selectedFile);
+
   const reader = new FileReader();
 
   reader.onload = async (event) => {
-    image = event.target.result;
+    const originalImage = event.target.result;
 
-    // convert to JPEG if the uploaded file is not in JPEG format
+    // Analyze the original image before a possible format conversion.
+    const status = analyzeExif(originalImage);
+    exif = status.exif;
+
+    image = originalImage;
+
+    // Convert to JPEG if the uploaded file is not already in JPEG format.
     if (file.type !== 'image/jpeg') {
       image = await convertToJpeg(image);
       file = new File(
@@ -261,16 +298,7 @@ function uploadImage(e) {
       '<img src="' + image + '" alt="Bildvorschau">' +
       '<p>' + file.name + '</p>';
 
-    const status = analyzeExif(image);
-    const mode = await showExifDialog(status);
-
-    if (mode === 'cancel') {
-      imageDiv.replaceChildren();
-      return;
-    }
-
     infoPanel.style.display = 'flex';
-    exif = status.exif;
 
     if (window.matchMedia('(max-width: 600px)').matches) {
       controlPanel.classList.add('collapsed');
@@ -312,8 +340,13 @@ function uploadImage(e) {
         longitudeMultiplier *
         piexif.GPSHelper.dmsRationalToDeg(longitude);
 
+      originalLat = lat;
+      originalLon = lon;
       flyToZoom = 18;
     } else {
+      originalLat = null;
+      originalLon = null;
+
       // Kreishaus
       lat = 51.258812;
       lon = 6.391263;
@@ -327,16 +360,17 @@ function uploadImage(e) {
       direction[1] !== 0
     ) {
       heading = direction[0] / direction[1];
+      originalHeading = heading;
     } else {
       heading = 180;
+      originalHeading = null;
     }
 
-    orientationEnabled = mode === 'position-direction';
+    // Existing orientation is shown by default. If none exists, users can
+    // enable it explicitly via the checkbox.
+    orientationEnabled = status.hasDirection;
     orientationElement.disabled = false;
     orientationElement.checked = orientationEnabled;
-
-    // Wenn Orientierung von Anfang an aktiv ist, wird sie bereits im ersten Popup erklärt.
-    orientationHelpShown = orientationEnabled;
 
     updateTextInfo({ lng: lon, lat }, heading);
 
@@ -351,9 +385,18 @@ function uploadImage(e) {
 
     if (orientationEnabled) {
       showDirectionCone(marker.getLngLat());
-      showMarkerHelp(marker, 'full');
+
+      if (!positionHelpShown || !orientationHelpShown) {
+        showMarkerHelp(marker, 'full');
+        positionHelpShown = true;
+        orientationHelpShown = true;
+      }
+
     } else {
-      showMarkerHelp(marker, 'position');
+      if (!positionHelpShown) {
+        showMarkerHelp(marker, 'position');
+        positionHelpShown = true;
+      }
     }
 
     updateExifAndImage(
@@ -411,35 +454,24 @@ function handleOrientationChange() {
   }
 
   orientationEnabled = orientationElement.checked;
+
   const marker = currentMarkers[0];
   const pos = marker.getLngLat();
 
   if (orientationEnabled) {
     showDirectionCone(pos);
-    updateTextInfo(pos, heading);
 
+    // Orientierung nur einmal erklären
     if (!orientationHelpShown) {
-      if (helpPopup) {
-        // Fall 2: Popup ist noch offen -> Orientierungserklärung ergänzen.
-        renderMarkerHelp(helpPopup.getElement().querySelector('.marker-help'), 'full');
-      } else {
-        // Fall 2: Popup wurde bereits geschlossen -> nur Orientierung erklären.
-        showMarkerHelp(marker, 'orientation');
-      }
-
+      showMarkerHelp(marker, 'orientation');
       orientationHelpShown = true;
-    } else if (helpPopup) {
-      renderMarkerHelp(helpPopup.getElement().querySelector('.marker-help'), 'full');
     }
+
   } else {
     hideDirectionCone();
-    updateTextInfo(pos, heading);
-
-    if (helpPopup) {
-      renderMarkerHelp(helpPopup.getElement().querySelector('.marker-help'), 'position');
-    }
   }
 
+  updateTextInfo(pos, heading);
   updateExifAndImage(exif, image, file, pos, heading);
 }
 
@@ -558,7 +590,7 @@ function renderMarkerHelp(container, mode) {
     note = `
       <div class="marker-help-note">
         Wenn Sie nur die Position aktualisieren möchten, können Sie das
-        Setzen der Orientierung links im Panel deaktivieren.
+        Setzen der Orientierung im Panel links oben deaktivieren.
       </div>
     `;
   } else {
@@ -567,7 +599,7 @@ function renderMarkerHelp(container, mode) {
     note = `
       <div class="marker-help-note">
         Sie können zusätzlich eine Orientierung hinzufügen,
-        indem Sie das Setzen der Orientierung links im Panel aktivieren.
+        indem Sie das Setzen der Orientierung im Panel links oben aktivieren.
       </div>
     `;
   }
@@ -598,14 +630,14 @@ function createDirectionCone(lon, lat, heading, pixelLength = null, angle = 25, 
 
   // determine pixel length (size of cone) based on screen size if not provided
   if (pixelLength === null) {
-    
+
     // same rule as in css
     pixelLength = window.matchMedia('(max-width: 600px), (max-height: 750px)').matches
       ? 0.18
       : 0.3;
-    
+
   }
-  
+
   const zoom = map.getZoom();
   const metersPerPixel = getScaledConeLength(lat, zoom);
   const lengthInMeters = pixelLength * metersPerPixel;
@@ -640,6 +672,7 @@ function createDirectionCone(lon, lat, heading, pixelLength = null, angle = 25, 
 // set up map
 var map = new maplibregl.Map({
   container: 'map',
+  attributionControl: false,
   style: {
     version: 8,
     sources: {
@@ -653,6 +686,21 @@ var map = new maplibregl.Map({
     layers: [{ id: 'osm', type: 'raster', source: 'osm' }]
   },
   bounds: [[5.8, 50.3], [9.5, 52.5]]
+});
+
+const attributionControl = new maplibregl.AttributionControl({
+  compact: true
+});
+
+map.addControl(attributionControl, 'bottom-right');
+
+map.once('load', () => {
+  const attribution = document.querySelector('.maplibregl-ctrl-attrib');
+
+  if (attribution) {
+    attribution.classList.remove('maplibregl-compact-show');
+    attribution.removeAttribute('open');
+  }
 });
 
 map.dragRotate.disable();
@@ -856,28 +904,54 @@ map.on('touchmove', (e) => {
 
 map.on('touchend', stopRotation);
 
-// function for updating the info text (lat, lon, heading)
+// updates the comparison of original and new image values
 function updateTextInfo(pos, heading) {
-  const directionRow = orientationEnabled
-    ? `
-      <tr>
-        <td>Orientierung:</td>
-        <td>${Math.round(heading)}°</td>
-      </tr>
-    `
-    : '';
+  const originalLongitude =
+    originalLon !== null ? originalLon.toFixed(6) : '—';
+  const originalLatitude =
+    originalLat !== null ? originalLat.toFixed(6) : '—';
+  const originalOrientation =
+    originalHeading !== null ? `${Math.round(originalHeading)}°` : '—';
+
+  const newOrientation = orientationEnabled
+    ? `${Math.round(heading)}°`
+    : originalHeading !== null
+      ? `${Math.round(originalHeading)}°`
+      : '—';
+
+  const newFileType = getFileType(file);
 
   textInfo.innerHTML = `
-    <table>
-      <tr>
-        <td>Länge:</td>
-        <td>${pos.lng.toFixed(6)}</td>
-      </tr>
-      <tr>
-        <td>Breite:</td>
-        <td>${pos.lat.toFixed(6)}</td>
-      </tr>
-      ${directionRow}
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Ursprünglich</th>
+          <th>Neu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Länge:</td>
+          <td>${originalLongitude}</td>
+          <td>${pos.lng.toFixed(6)}</td>
+        </tr>
+        <tr>
+          <td>Breite:</td>
+          <td>${originalLatitude}</td>
+          <td>${pos.lat.toFixed(6)}</td>
+        </tr>
+        <tr>
+          <td>Orientierung:</td>
+          <td>${originalOrientation}</td>
+          <td>${newOrientation}</td>
+        </tr>
+        <tr>
+          <td>Format:</td>
+          <td>${originalFileType ?? '—'}</td>
+          <td>${newFileType}</td>
+        </tr>
+      </tbody>
     </table>
   `;
 }
