@@ -10,9 +10,9 @@
 **Browsertool zum Anzeigen, Verändern und Setzen der Position und Ausrichtung einer Fotoaufnahme**
 
 **Zur Anwendung:**  
-https://kreis-viersen.github.io/fotostandort/
+https://kreis-viersen.usercontent.opencode.de/fotostandort
 
-[Fotostandort](https://kreis-viersen.github.io/fotostandort/) ist eine vom Kreis Viersen entwickelte Kartenanwendung, mit der die in einem Foto gespeicherte Aufnahmeposition und Blickrichtung angezeigt und verändert werden können. Fehlen diese Informationen, können sie neu gesetzt werden.
+[Fotostandort](https://kreis-viersen.usercontent.opencode.de/fotostandort) ist eine vom Kreis Viersen entwickelte Kartenanwendung, mit der die in einem Foto gespeicherte Aufnahmeposition und Blickrichtung angezeigt und verändert werden können. Fehlen diese Informationen, können sie neu gesetzt werden.
 
 Die Bearbeitung erfolgt vollständig lokal im Webbrowser. Bilder werden nicht auf einen Server hochgeladen.
 
@@ -39,7 +39,7 @@ Bilder, die nicht im JPEG-Format vorliegen, werden beim Laden automatisch in das
 
 ## Mobile Nutzung
 
-[Fotostandort](https://kreis-viersen.github.io/fotostandort/) ist auch für die Nutzung auf Smartphones und Tablets geeignet.
+[Fotostandort](https://kreis-viersen.usercontent.opencode.de/fotostandort) ist auch für die Nutzung auf Smartphones und Tablets geeignet.
 
 Position und Orientierung können auf Touch-Geräten direkt in der Karte bearbeitet werden. Der Marker lässt sich mit dem Finger verschieben und der Sichtkegel durch eine Drehbewegung anpassen.
 
@@ -64,7 +64,7 @@ Fragen, Anmerkungen, Fehlermeldungen etc. können über einen [GitHub-Issue](htt
 
 ## Weitere Informationen
 
-- [Fotostandort öffnen](https://kreis-viersen.github.io/fotostandort/)
+- [Fotostandort öffnen](https://kreis-viersen.usercontent.opencode.de/fotostandort)
 - [Releases / Changelog](https://github.com/kreis-viersen/fotostandort/releases)
 
 ## Lizenz
