@@ -262,6 +262,10 @@
 			letter-spacing: 1px;
 		}
 
+		.maplibregl-ctrl-bottom-right .maplibregl-ctrl-group {
+			margin-bottom: 10px;
+		}
+
 		.marker-help-popup {
 			z-index: 10 !important;
 		}
@@ -650,14 +654,7 @@
 		</div>
 	</dialog>
 
-	<!--
-	https://github.com/tholman/github-corners
-	The MIT License (MIT)
-	Copyright (c) 2016 Tim Holman
-	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-	The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	-->
+	<!-- https://github.com/tholman/github-corners The MIT License (MIT) Copyright (c) 2016 Tim Holman Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
 	<a target='_blank' rel='noopener noreferrer' href="https://github.com/kreis-viersen/fotostandort"
 		class="github-corner" aria-label="View source on GitHub"><svg xmlns="http://www.w3.org/2000/svg" width="80"
 			height="80" viewBox="0 0 250 250" fill="#151513"
@@ -703,6 +700,84 @@
 		</style>
 	</a>
 
+	<!--
+	<a target="_blank" rel="noopener noreferrer" href="https://gitlab.opencode.de/kreis-viersen/fotostandort"
+		class="opencode-corner" aria-label="Quellcode auf openCode" title="Quellcode auf openCode">
+		<img src="assets/openCode.svg" alt="openCode" class="opencode-corner-logo">
+
+		<style>
+			.opencode-corner {
+				position: absolute;
+				top: 10px;
+				right: 10px;
+				z-index: 10;
+
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				width: 125px;
+				height: 38px;
+				padding: 4px 8px;
+
+				background: rgba(255, 255, 255, 0.9);
+				border: 1px solid rgba(0, 0, 0, 0.12);
+				border-radius: 7px;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+				box-sizing: border-box;
+			}
+
+			.opencode-corner-logo {
+				display: block;
+				width: 100%;
+				height: auto;
+				transform-origin: center;
+			}
+
+			.opencode-corner:hover .opencode-corner-logo {
+				animation: opencode-wave 560ms ease-in-out;
+			}
+
+			@keyframes opencode-wave {
+
+				0%,
+				100% {
+					transform: rotate(0deg);
+				}
+
+				20%,
+				60% {
+					transform: rotate(-4deg);
+				}
+
+				40%,
+				80% {
+					transform: rotate(3deg);
+				}
+			}
+
+			@media (max-width: 600px),
+			(max-height: 750px) {
+				.opencode-corner {
+					top: 8px;
+					right: 8px;
+					width: 95px;
+					height: 32px;
+					padding: 4px 6px;
+				}
+
+				.opencode-corner:hover .opencode-corner-logo {
+					animation: none;
+				}
+
+				.opencode-corner .opencode-corner-logo {
+					animation: opencode-wave 560ms ease-in-out;
+				}
+			}
+		</style>
+	</a>
+-->
 </body>
 
 </html>
