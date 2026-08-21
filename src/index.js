@@ -69,12 +69,21 @@ function analyzeExif(image) {
   try {
     exifData = piexif.load(image);
 
+    const latitude =
+      exifData?.GPS?.[piexif.GPSIFD.GPSLatitude];
+
+    const longitude =
+      exifData?.GPS?.[piexif.GPSIFD.GPSLongitude];
+
+    const direction =
+      exifData?.GPS?.[piexif.GPSIFD.GPSImgDirection];
+
     hasLocation =
-      exifData?.GPS?.[piexif.GPSIFD.GPSLatitude] !== undefined &&
-      exifData?.GPS?.[piexif.GPSIFD.GPSLongitude] !== undefined;
+      isValidGpsCoordinate(latitude) &&
+      isValidGpsCoordinate(longitude);
 
     hasDirection =
-      exifData?.GPS?.[piexif.GPSIFD.GPSImgDirection] !== undefined;
+      isValidGpsDirection(direction);
   } catch (err) {
     hasExif = false;
   }
@@ -439,6 +448,32 @@ function uploadImage(e) {
   reader.readAsDataURL(file);
 }
 
+// checks whether an EXIF GPS coordinate contains valid rational values based on piexifjs
+function isValidGpsCoordinate(value) {
+  return (
+    Array.isArray(value) &&
+    value.length === 3 &&
+    value.every(part =>
+      Array.isArray(part) &&
+      part.length === 2 &&
+      Number.isFinite(part[0]) &&
+      Number.isFinite(part[1]) &&
+      part[1] !== 0
+    )
+  );
+}
+
+// checks whether an EXIF direction contains a valid rational value based on piexifjs
+function isValidGpsDirection(value) {
+  return (
+    Array.isArray(value) &&
+    value.length === 2 &&
+    Number.isFinite(value[0]) &&
+    Number.isFinite(value[1]) &&
+    value[1] !== 0
+  );
+}
+
 // helper function to clone EXIF values, especially for arrays
 function cloneExifValue(value) {
   if (Array.isArray(value)) {
@@ -688,11 +723,19 @@ var map = new maplibregl.Map({
   bounds: [[5.8, 50.3], [9.5, 52.5]]
 });
 
+
 const attributionControl = new maplibregl.AttributionControl({
   compact: true
 });
 
 map.addControl(attributionControl, 'bottom-right');
+
+const navigationControl = new maplibregl.NavigationControl({
+  showCompass: false,
+  showZoom: true
+});
+
+map.addControl(navigationControl, 'bottom-right');
 
 map.once('load', () => {
   const attribution = document.querySelector('.maplibregl-ctrl-attrib');
