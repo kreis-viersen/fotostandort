@@ -8,7 +8,7 @@ url: 'https://gitlab.opencode.de/kreis-viersen/fotostandort'
 landingURL: 'https://kreis-viersen.usercontent.opencode.de/fotostandort'
 softwareVersion: 1.0.0
 releaseDate: '2026-08-20'
-logo: src/assets/icon_fotostandort_small.png
+logo: logo_fotostandort_opencode.png
 platforms:
   - web
 usedBy:
