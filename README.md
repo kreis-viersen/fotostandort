@@ -69,7 +69,9 @@ Fragen, Anmerkungen, Fehlermeldungen etc. können über einen [GitHub-Issue](htt
 
 ## Lizenz
 
-Dieses Projekt steht unter der MIT-Lizenz.
+Fotostandort steht unter der [MIT-Lizenz](LICENSE) als Open-Source-Software zur Verfügung.
+
+Das in der Anwendung verwendete openCode-Logo ist nicht Bestandteil dieser Lizenz. Die Verwendung des Logos erfolgt mit freundlicher Genehmigung von [openCode](https://opencode.de/) und unterliegt dem Markenrecht.
 
 
 ## Einstellung Speicherort Webbrowser

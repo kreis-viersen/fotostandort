@@ -46,6 +46,10 @@ module.exports = {
         {
           from: './src/assets/icon_fotostandort.png',
           to: 'assets/icon_fotostandort.png'
+        },
+        {
+          from: './src/assets/openCode.svg',
+          to: 'assets/openCode.svg'
         }
       ],
     }),
