@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "file-saver": "^2.0.5",
-    "maplibre-gl": "^5.23.0",
+    "maplibre-gl": "^6.6.0",
     "piexifjs": "^1.0.6"
   }
 }
