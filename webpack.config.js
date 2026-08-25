@@ -2,7 +2,6 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 const LicensePlugin = require('webpack-license-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
 
 const path = require('path');
 
@@ -25,11 +24,6 @@ module.exports = {
     },
   },
   entry: './src/index.js',
-  optimization: {
-    minimizer: [new TerserPlugin({
-      extractComments: false,
-    })],
-  },
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
