@@ -307,9 +307,16 @@ function uploadImage(e) {
       );
     }
 
-    imageDiv.innerHTML =
-      '<img src="' + image + '" alt="Bildvorschau">' +
-      '<p>' + file.name + '</p>';
+    imageDiv.replaceChildren();
+
+    const preview = document.createElement('img');
+    preview.src = image;
+    preview.alt = 'Bildvorschau';
+
+    const fileName = document.createElement('p');
+    fileName.textContent = file.name;
+
+    imageDiv.append(preview, fileName);
 
     infoPanel.style.display = 'flex';
 
@@ -968,39 +975,41 @@ function updateTextInfo(pos, heading) {
 
   const newFileType = getFileType(file);
 
-  textInfo.innerHTML = `
-    <table class="comparison-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Ursprünglich</th>
-          <th>Neu</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Länge:</td>
-          <td>${originalLongitude}</td>
-          <td>${pos.lng.toFixed(6)}</td>
-        </tr>
-        <tr>
-          <td>Breite:</td>
-          <td>${originalLatitude}</td>
-          <td>${pos.lat.toFixed(6)}</td>
-        </tr>
-        <tr>
-          <td>Orientierung:</td>
-          <td>${originalOrientation}</td>
-          <td>${newOrientation}</td>
-        </tr>
-        <tr>
-          <td>Format:</td>
-          <td>${originalFileType ?? '—'}</td>
-          <td>${newFileType}</td>
-        </tr>
-      </tbody>
-    </table>
-  `;
+  textInfo.textContent = '';
+
+  const table = document.createElement('table');
+  table.className = 'comparison-table';
+
+  const thead = document.createElement('thead');
+  const headerRow = document.createElement('tr');
+  ['', 'Ursprünglich', 'Neu'].forEach((headerText) => {
+    const th = document.createElement('th');
+    th.textContent = headerText;
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+
+  const tbody = document.createElement('tbody');
+  const rows = [
+    ['Länge:', originalLongitude, pos.lng.toFixed(6)],
+    ['Breite:', originalLatitude, pos.lat.toFixed(6)],
+    ['Orientierung:', originalOrientation, newOrientation],
+    ['Format:', originalFileType ?? '—', newFileType],
+  ];
+
+  rows.forEach((rowValues) => {
+    const tr = document.createElement('tr');
+    rowValues.forEach((value) => {
+      const td = document.createElement('td');
+      td.textContent = value;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  textInfo.appendChild(table);
 }
 
 // function that updates EXIF data (lat, lon and optionally heading)
