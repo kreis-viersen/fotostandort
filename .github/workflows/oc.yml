@@ -5,16 +5,20 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   sync:
-    runs-on: ubuntu-latest
     name: Git Repo Sync
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout GitHub Repository
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Configure Git and Sync to GitLab
         run: |
