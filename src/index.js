@@ -1,7 +1,11 @@
 import FileSaver from 'file-saver';
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 const piexif = require('piexifjs');
+
+maplibregl.setWorkerUrl(
+  new URL('./maplibre/maplibre-gl-worker.mjs', document.baseURI).href
+);
 
 const inputElement = document.getElementById('input');
 const infoPanel = document.getElementById('info-panel');
