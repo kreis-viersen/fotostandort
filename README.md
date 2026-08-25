@@ -1,10 +1,10 @@
 
 # <img src="src/assets/icon_fotostandort.png" width="70" style="vertical-align: middle;" /> Fotostandort
 
-[![GitHub CI status](https://github.com/kreis-viersen/fotostandort/workflows/ci/badge.svg)][github-action-ci]
+[![GitHub CI status](https://github.com/kreis-viersen/fotostandort/actions/workflows/ci.yml/badge.svg?branch=main&event=push)][github-action-ci]
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)][license]
 
-[github-action-ci]: https://github.com/kreis-viersen/fotostandort/actions?query=workflow%3Aci
+[github-action-ci]: https://github.com/kreis-viersen/fotostandort/actions/workflows/ci.yml?query=branch%3Amain+event%3Apush
 [license]: https://tldrlegal.com/license/mit-license
 
 **Browsertool zum Anzeigen, Verändern und Setzen der Position und Ausrichtung einer Fotoaufnahme**
