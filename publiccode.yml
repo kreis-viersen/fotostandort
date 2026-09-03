@@ -5,7 +5,6 @@
 publiccodeYmlVersion: '0.2'
 name: Fotostandort
 url: 'https://gitlab.opencode.de/kreis-viersen/fotostandort'
-landingURL: 'https://kreis-viersen.usercontent.opencode.de/fotostandort'
 softwareVersion: 1.1.0
 releaseDate: '2026-08-25'
 logo: logo_fotostandort_opencode.png
@@ -42,6 +41,8 @@ description:
       Browsertool zum Anzeigen, Verändern und neu Setzen der Aufnahmeposition
       und Orientierung von Bildern.
     longDescription: >
+      **Webanwendung:** [kreis-viersen.usercontent.opencode.de/fotostandort](https://kreis-viersen.usercontent.opencode.de/fotostandort)
+    
       Fotostandort ist eine browserbasierte Kartenanwendung zum Anzeigen,
       Verändern und Setzen der Aufnahmeposition und Orientierung von Bildern.
       Vorhandene Positions- und Richtungsinformationen werden aus den EXIF-Daten
