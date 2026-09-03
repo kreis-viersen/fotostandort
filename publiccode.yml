@@ -41,7 +41,7 @@ description:
     shortDescription: >
       Browsertool zum Anzeigen, Verändern und neu Setzen der Aufnahmeposition
       und Orientierung von Bildern.
-    longDescription: >
+    longDescription: |
       Fotostandort ist eine browserbasierte Kartenanwendung zum Anzeigen,
       Verändern und Setzen der Aufnahmeposition und Orientierung von Bildern.
       Vorhandene Positions- und Richtungsinformationen werden aus den EXIF-Daten
