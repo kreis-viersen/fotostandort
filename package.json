@@ -9,20 +9,20 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^14.0.0",
-    "css-loader": "^7.1.4",
+    "css-loader": "^7.1.5",
     "gh-pages": "^6.3.0",
     "html-inline-script-webpack-plugin": "^3.2.1",
     "html-webpack-plugin": "^5.6.8",
     "style-loader": "^4.0.0",
-    "webpack": "^5.109.2",
-    "webpack-cli": "^7.2.2",
+    "webpack": "^5.110.1",
+    "webpack-cli": "^7.2.3",
     "webpack-dev-server": "^6.0.0",
     "webpack-license-plugin": "^4.5.1",
     "async": "^3.2.6"
   },
   "dependencies": {
     "file-saver": "^2.0.5",
-    "maplibre-gl": "^6.6.0",
+    "maplibre-gl": "^6.7.0",
     "piexifjs": "^1.0.6"
   }
 }
