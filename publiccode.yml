@@ -40,7 +40,7 @@ description:
     shortDescription: >
       Browsertool zum Anzeigen, Verändern und neu Setzen der Aufnahmeposition
       und Orientierung von Bildern.
-    longDescription: >
+    longDescription: |
       **Webanwendung:** [kreis-viersen.usercontent.opencode.de/fotostandort](https://kreis-viersen.usercontent.opencode.de/fotostandort)
     
       Fotostandort ist eine browserbasierte Kartenanwendung zum Anzeigen,
